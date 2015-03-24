@@ -27,28 +27,34 @@ public class Inicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jMatricula = new javax.swing.JLabel();
+        jNombre = new javax.swing.JLabel();
         Matricula = new javax.swing.JTextField();
         Nombre = new javax.swing.JTextField();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
-        jLabel3 = new javax.swing.JLabel();
+        jAsignatura = new javax.swing.JLabel();
         Asignatura = new javax.swing.JComboBox();
         Aceptar = new javax.swing.JButton();
         Cancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Matricula: ");
+        jMatricula.setText("Matricula: ");
 
-        jLabel2.setText("Nombre: ");
+        jNombre.setText("Nombre: ");
+
+        Matricula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MatriculaActionPerformed(evt);
+            }
+        });
 
         jRadioButton1.setText("Alta");
 
         jRadioButton2.setText("Baja");
 
-        jLabel3.setText("Asignatura:");
+        jAsignatura.setText("Asignatura:");
 
         Asignatura.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Inteligencia Artificial", "Matematicas Discretas", "Fisica", "Arquitectura de Computadoras", "Estructura de Datos", "Teoria de la Computacion", "Computo Cientifico", "Inferencia Estadistica", "Compiladores", "Teroria de Lenguaje de Programación" }));
 
@@ -77,22 +83,22 @@ public class Inicio extends javax.swing.JFrame {
                             .addContainerGap()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
+                                    .addComponent(jMatricula)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addComponent(Matricula, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
+                                    .addComponent(jNombre)
                                     .addGap(18, 18, 18)
                                     .addComponent(Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(63, 63, 63)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel3)
+                                .addComponent(jAsignatura)
                                 .addComponent(jRadioButton1))
                             .addGap(18, 18, 18)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jRadioButton2)
-                                .addComponent(Asignatura, 0, 218, Short.MAX_VALUE)))))
+                                .addComponent(Asignatura, 0, 219, Short.MAX_VALUE)))))
                 .addContainerGap(44, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -100,11 +106,11 @@ public class Inicio extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(jMatricula)
                     .addComponent(Matricula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(jNombre)
                     .addComponent(Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -112,7 +118,7 @@ public class Inicio extends javax.swing.JFrame {
                     .addComponent(jRadioButton2))
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(jAsignatura)
                     .addComponent(Asignatura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -128,6 +134,10 @@ public class Inicio extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_CancelarActionPerformed
+
+    private void MatriculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MatriculaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MatriculaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -170,9 +180,9 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JButton Cancelar;
     private javax.swing.JTextField Matricula;
     private javax.swing.JTextField Nombre;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jAsignatura;
+    private javax.swing.JLabel jMatricula;
+    private javax.swing.JLabel jNombre;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     // End of variables declaration//GEN-END:variables
