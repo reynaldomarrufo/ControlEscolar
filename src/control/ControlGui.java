@@ -34,6 +34,7 @@ class ControlGui extends JFrame{
         JComboBox i= new JComboBox();
         i.setLayout(new GridLayout(7, 7));
         i.add(new Label("Asignatura: "));
+        i.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Inteligencia Artificial", "Matematicas Discretas", "Fisica", "Arquitectura de Computadoras", "Estructura de Datos", "Teoria de la Computacion", "Computo Cientifico", "Inferencia Estadistica", "Compiladores", "Teroria de Lenguaje de Programación" }));
         JTextField s = new JTextField();
        s.setLayout(new GridLayout(5,5));
        s.add(new Label("Capacidad: "));

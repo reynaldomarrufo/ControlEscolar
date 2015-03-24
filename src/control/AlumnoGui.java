@@ -45,6 +45,7 @@ import javax.swing.*;
         JComboBox e = new JComboBox();
         e.setLayout(new GridLayout(7,7));
         e.add(new Label("Asignatura:"));
+        e.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Inteligencia Artificial", "Matematicas Discretas", "Fisica", "Arquitectura de Computadoras", "Estructura de Datos", "Teoria de la Computacion", "Computo Cientifico", "Inferencia Estadistica", "Compiladores", "Teroria de Lenguaje de Programación" }));
         JButton c = new JButton();
         c.setLayout(new GridLayout(4,4));
         c.add(new JButton("aceptar"));
