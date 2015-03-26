@@ -79,75 +79,124 @@ public class AlumnoAgent extends Agent {
     public void updateCatalogue(final String matricula, final String nombre, final String accion, final String materia) {
         addBehaviour(new OneShotBehaviour() {
             public void action() {
+                Connection activo;
 
-                if (cupoDisponible(materia)) {
-                    int idAlumno = 0;
-                    int idMateria = 0;
-                    Connection activo;
-                    ResultSet resultado;
-                    ResultSet resultadoMateria;
-                    consultas con = new consultas();
-                    activo = con.getConexion();
-                    String queryIdAlumno = "select id from alumno where matricula = ? limit 1";
-                    String queryIdMateria = "select id from materia where nombre = ? limit 1";
-                    try {
-                        PreparedStatement preparedStmt = activo.prepareStatement(queryIdAlumno);
-                        PreparedStatement preparedStmtMateria = activo.prepareStatement(queryIdMateria);
-                        preparedStmt.setString(1, matricula);
-                        preparedStmtMateria.setString(1, materia);
-                        resultado = preparedStmt.executeQuery();
-                        resultadoMateria = preparedStmtMateria.executeQuery();
-                        while (resultado.next()) {
-                            idAlumno = Integer.parseInt(resultado.getString("id"));
+                int idAlumno;
+                int idMateria;
+                consultas con = new consultas();
+                activo = con.getConexion();
 
-                        }
-                        while (resultadoMateria.next()) {
-                            idMateria = Integer.parseInt(resultadoMateria.getString("id"));
-                        }
-                        if (resultado != null && resultadoMateria != null) {
-
-                            String insertGrupo = "Insert into grupo (alumno_id,materia_id) values (?,?)";
-                            PreparedStatement preparedStmtGrupo = activo.prepareStatement(insertGrupo);
-                            preparedStmtGrupo.setInt(1, idAlumno);
-                            preparedStmtGrupo.setInt(2, idMateria);
-                            preparedStmtGrupo.execute();
-                        }
-
-                    } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, "Error cierre: " + ex.getMessage());
+                idAlumno = getAlumnoId(activo, matricula, nombre);
+                idMateria = getMateriaId(activo, materia);
+                if (accion == "alta") {
+                    if (agregarCarga(activo, idAlumno, idMateria, materia, matricula)) {
+                        JOptionPane.showMessageDialog(null, "Carga academica correcta");
                     }
-                    con.cerrarConexion(activo);
-
-                } else {
-
-                    catalogue.put(materia, matricula);
-                    System.out.println(materia + " inserted into catalogue. matricula = " + matricula);
-                    JOptionPane.showMessageDialog(null, "Cupo LLENO");
+                } else if (accion == "baja") {
+                    eliminarCarga(activo, idAlumno, idMateria);
+                    JOptionPane.showMessageDialog(null, "Carga eliminada");
                 }
+                con.cerrarConexion(activo);
             }
 
         });
     }
 
-    public boolean cupoDisponible(String materia) {
-        Connection activo;
-        consultas con = new consultas();
-        activo = con.getConexion();
+    public int getAlumnoId(Connection activo, final String matricula, final String nombre) {
+        int idAlumno = 0;
+        ResultSet resultado;
+        String queryIdAlumno = "select id from alumno where matricula = ? limit 1";
+        try {
+            PreparedStatement preparedStmt = activo.prepareStatement(queryIdAlumno);
+            preparedStmt.setString(1, matricula);
+            resultado = preparedStmt.executeQuery();
+            while (resultado.next()) {
+                idAlumno = Integer.parseInt(resultado.getString("id"));
+            }
+            if (resultado != null) {
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error cierre: " + ex.getMessage());
+        }
+        return idAlumno;
+    }
+
+    public int getMateriaId(Connection activo, final String materia) {
+        int idMateria = 0;
+        ResultSet resultadoMateria;
+        String queryIdMateria = "select id from materia where nombre = ? limit 1";
+        try {
+            PreparedStatement preparedStmtMateria = activo.prepareStatement(queryIdMateria);
+            preparedStmtMateria.setString(1, materia);
+            resultadoMateria = preparedStmtMateria.executeQuery();
+            while (resultadoMateria.next()) {
+                idMateria = Integer.parseInt(resultadoMateria.getString("id"));
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error cierre: " + ex.getMessage());
+        }
+        return idMateria;
+    }
+
+    public boolean agregarCarga(Connection activo, final int idAlumno, final int idMateria, final String materia, final String matricula) {
+        if (cupoDisponible(activo, idMateria)) {
+            try {
+                if (true) {
+                    String insertGrupo = "Insert into grupo (alumno_id,materia_id) values (?,?)";
+                    PreparedStatement preparedStmtGrupo = activo.prepareStatement(insertGrupo);
+                    preparedStmtGrupo.setInt(1, idAlumno);
+                    preparedStmtGrupo.setInt(2, idMateria);
+                    preparedStmtGrupo.execute();
+                    return true;
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Error cierre: " + ex.getMessage());
+            }
+
+        } else {
+            String matriculas;
+            matriculas = (String) catalogue.get(materia);
+            System.out.println("matriculas catalogo " + matriculas);
+            if (matriculas != null) {
+                matriculas = matriculas + "," + matricula;
+            } else {
+                matriculas = matricula;
+            }
+            catalogue.put(materia, matriculas);
+            System.out.println(materia + " inserted into catalogue. matricula = " + matricula);
+            JOptionPane.showMessageDialog(null, "Cupo no disponible, Agregado a lista de espera");
+        }
+        return false;
+    }
+
+    public boolean eliminarCarga(Connection activo, final int idAlumno, final int idMateria) {
+        try {
+            String insertGrupo = "DELETE from grupo where alumno_id= ? and materia_id= ?";
+            PreparedStatement preparedStmtGrupo = activo.prepareStatement(insertGrupo);
+            preparedStmtGrupo.setInt(1, idAlumno);
+            preparedStmtGrupo.setInt(2, idMateria);
+            preparedStmtGrupo.execute();
+            return true;
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error cierre: " + ex.getMessage());
+        }
+        return false;
+    }
+
+    public boolean cupoDisponible(Connection activo, final int idMateria) {
         int inscritos = 0;
         int capacidadT = 0;
         ResultSet resultado;
         ResultSet resultadoMateria;
         String order = "select count(*) as total from grupo where materia_id= ?";
-        String capacidad = "select capacidad from materia where nombre= ?";
+        String capacidad = "select capacidad from materia where id= ?";
         try {
             PreparedStatement preparedStmt = activo.prepareStatement(order);
             PreparedStatement preparedStmtC = activo.prepareStatement(capacidad);
-            preparedStmtC.setString(1, materia);
-            preparedStmt.setInt(1, 1);
+            preparedStmtC.setInt(1, idMateria);
+            preparedStmt.setInt(1, idMateria);
             resultado = preparedStmt.executeQuery();
             resultadoMateria = preparedStmtC.executeQuery();
-                   // sentencia = activo.createStatement();
-            // numFilas = sentencia.executeUpdate(order);
             while (resultado.next()) {
                 inscritos = Integer.parseInt(resultado.getString("total"));
             }
@@ -155,19 +204,25 @@ public class AlumnoAgent extends Agent {
                 capacidadT = Integer.parseInt(resultadoMateria.getString("capacidad"));
             }
             if (inscritos < capacidadT) {
-                con.cerrarConexion(activo);
+
                 return true;
             } else {
-                
-                con.cerrarConexion(activo);
+
                 return false;
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error validacion: " + ex.getMessage());
         }
-        con.cerrarConexion(activo);
-
         return false;
+    }
+
+    public boolean cupoDisponible(final String materia) {
+        Connection activo;
+        consultas con = new consultas();
+        activo = con.getConexion();
+        int idMateria;
+        idMateria = getMateriaId(activo, materia);
+        return cupoDisponible(activo, idMateria);
     }
 
     /**
@@ -189,16 +244,23 @@ public class AlumnoAgent extends Agent {
                 String matricula;
                 ACLMessage reply = msg.createReply();
                 matricula = (String) catalogue.get(materia);
-                if (matricula != null) {
+                if(matricula!=null){
+                String[] parts = matricula.split(",");
+                String part1 = parts[0];
+                
+                //System.out.println("esta es las matriculas " + part1);
+                if (part1 != null) {
                     // The requested book is available for sale. Reply with the price
                     reply.setPerformative(ACLMessage.PROPOSE);
-                    reply.setContent(String.valueOf(matricula));
+                    reply.setContent(String.valueOf(part1));
                 } else {
                     // The requested book is NOT available for sale.
                     reply.setPerformative(ACLMessage.REFUSE);
                     reply.setContent("not-available");
                 }
                 myAgent.send(reply);
+                }
+                
             } else {
                 block();
             }
@@ -213,21 +275,34 @@ public class AlumnoAgent extends Agent {
      * that the purchase has been sucesfully completed.
      */
     private class PurchaseOrdersServer extends CyclicBehaviour {
+
         public void action() {
             MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
             ACLMessage msg = myAgent.receive(mt);
             AlumnoAgent validacion = new AlumnoAgent();
-            if (msg != null ) {
+            if (msg != null) {
                 // ACCEPT_PROPOSAL Message received. Process it
                 String materia = msg.getContent();
                 ACLMessage reply = msg.createReply();
-                String matricula = (String) catalogue.remove(materia);
-               
+                String aux = null;
+                String matricula = (String) catalogue.get(materia);
                 if (matricula != null & validacion.cupoDisponible(materia)) {
-                   
-                    
-                        addAlumno(materia, matricula);
-                    
+                    matricula = (String) catalogue.remove(materia);
+                    String[] AlumnosLista = matricula.split(",");
+                    for(int i=0; i<AlumnosLista.length;i++){
+                    if(validacion.cupoDisponible(materia))
+                    addAlumno(materia, AlumnosLista[i]);
+                    else{
+                    if(aux!=null)
+                    aux=aux+","+AlumnosLista[i];
+                    else
+                    aux=AlumnosLista[i];    
+                    }
+                    }
+                    if(aux!=null){
+                    System.out.println();
+                    catalogue.put(materia, aux);
+                    }
                     reply.setPerformative(ACLMessage.INFORM);
                     System.out.println(materia + " sold to agent " + msg.getSender().getName());
                 } else {
