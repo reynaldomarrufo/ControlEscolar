@@ -6,8 +6,8 @@
 package vistas;
 
 import agentes.AlumnoAgent;
-import agentes.BookSellerAgent;
-import control.consultas;
+import agentes.ControlAgent;
+import modelo.Conexion;
 import jade.gui.GuiEvent;
 import jade.gui.GuiAgent;
 import java.sql.Connection;
@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import modelo.materia;
 
@@ -32,6 +33,7 @@ public class Inicio extends javax.swing.JFrame {
     public Inicio(AlumnoAgent a) {
         owner=a;
         initComponents();
+        setIconImage (new ImageIcon(getClass().getResource("/imagenes/fmat.jpg")).getImage());
     }
 
     /**
@@ -76,6 +78,7 @@ public class Inicio extends javax.swing.JFrame {
 
         jLabel3.setText("Asignatura:");
 
+        Add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/carga.png"))); // NOI18N
         Add.setText("Aceptar");
         Add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -95,31 +98,31 @@ public class Inicio extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 170, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(Add)
-                        .addGap(37, 37, 37)
-                        .addComponent(Cancelar))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel2))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(nombre)
-                                .addComponent(matricula, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(63, 63, 63)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel3)
-                                .addComponent(radioAlta))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(radioBaja)
-                                .addComponent(Asignatura, 0, 228, Short.MAX_VALUE)))))
+                        .addGap(35, 35, 35)
+                        .addComponent(Cancelar)
+                        .addGap(36, 36, 36))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(nombre)
+                            .addComponent(matricula, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(63, 63, 63)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(radioAlta))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioBaja)
+                            .addComponent(Asignatura, 0, 228, Short.MAX_VALUE))))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -141,7 +144,7 @@ public class Inicio extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(Asignatura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Add)
                     .addComponent(Cancelar))
@@ -157,10 +160,11 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_CancelarActionPerformed
 
     private void AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddActionPerformed
+       
+        if(Asignatura.getSelectedIndex()!=0 && matricula.toString().trim()!=null && nombre.toString().trim()!=null){
         // TODO add your handling code here:
-        System.out.println("enviar");
         String accion="baja";
-      //  GuiEvent ge= new GuiEvent(this,SENT_TYPE);
+       //  GuiEvent ge= new GuiEvent(this,SENT_TYPE);
         if(radioAlta.isSelected()){
             accion= "alta";
         }
@@ -168,11 +172,10 @@ public class Inicio extends javax.swing.JFrame {
 	String nombres = nombre.getText().trim();
         String asignatura= Asignatura.getSelectedItem().toString();
 	owner.updateCatalogue(matriculas, nombres,accion,asignatura); 
-        
-        //ge.addParameter(titleField.getText());
-        //ge.addParameter(priceField.getText());
-        //owner.postGuiEvent(ge);
-        //titleField.setText("");
+        }
+        else{
+        JOptionPane.showMessageDialog(null,"Complete todo los campos");
+        }
     }//GEN-LAST:event_AddActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -180,7 +183,7 @@ public class Inicio extends javax.swing.JFrame {
                                           
         // TODO add your handling code here:
         Connection connection;
-        consultas con= new consultas();
+        Conexion con= new Conexion();
         connection=con.getConexion();
         DefaultComboBoxModel<Object> dcm = new DefaultComboBoxModel<>();
         Asignatura.setModel(dcm);

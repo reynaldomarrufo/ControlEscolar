@@ -19,7 +19,7 @@ package agentes;
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * ***************************************************************
  */
-import control.consultas;
+import modelo.Conexion;
 import jade.core.AID;
 import vistas.Inicio;
 import jade.core.Agent;
@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import vistas.Control;
 
-public class BookSellerAgent extends Agent {
+public class ControlAgent extends Agent {
 
     // The catalogue of books for sale (maps the title of a book to its price)
     
@@ -63,7 +63,7 @@ public class BookSellerAgent extends Agent {
 
         addBehaviour(new TickerBehaviour(this, 10000) {
             protected void onTick() {
-                System.out.println("Trying to buy ");
+                System.out.println("Intentar el insert");
                 // Update the list of seller agents
                 DFAgentDescription template = new DFAgentDescription();
                 ServiceDescription sd = new ServiceDescription();
@@ -71,16 +71,15 @@ public class BookSellerAgent extends Agent {
                 template.addServices(sd);
                 try {
                     DFAgentDescription[] result = DFService.search(myAgent, template);
-                    System.out.println("Found the following seller agents:");
                     AlumnoAgent = new AID[result.length];
                     for (int i = 0; i < result.length; ++i) {
                         AlumnoAgent[i] = result[i].getName();
-                        System.out.println(AlumnoAgent[i].getName());
+                       
                     }
                 } catch (FIPAException fe) {
                     fe.printStackTrace();
                 }
-                myAgent.addBehaviour(new BookSellerAgent.RequestPerformer());
+                myAgent.addBehaviour(new ControlAgent.RequestPerformer());
             }
         });
 
@@ -97,7 +96,7 @@ public class BookSellerAgent extends Agent {
         // Close the GUI
         myGui.dispose();
         // Printout a dismissal message
-        System.out.println("Seller-agent " + getAID().getName() + " terminating.");
+        System.out.println("agent " + getAID().getName() + " terminating.");
     }
 
     /**
@@ -108,9 +107,9 @@ public class BookSellerAgent extends Agent {
             public void action() {
                 Connection activo;
                 targetBookTitle = nombre;
-                System.out.println("Target book is "+targetBookTitle);
+                 
                 int numFilas;
-                consultas con = new consultas();
+                Conexion con = new Conexion();
                 activo = con.getConexion();
                 String order = "UPDATE materia SET capacidad= ? where nombre = ?";
                 try {
@@ -146,7 +145,6 @@ public class BookSellerAgent extends Agent {
             switch (step) {
                 case 0:
                     // Send the cfp to all sellers
-                    System.out.println("0");
                     ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
                     for (int i = 0; i < AlumnoAgent.length; ++i) {
                         cfp.addReceiver(AlumnoAgent[i]);
@@ -199,15 +197,13 @@ public class BookSellerAgent extends Agent {
                 case 3:
                     // Receive the purchase order reply
                     reply = myAgent.receive(mt);
-                    System.out.println("3");
                     if (reply != null) {
                         // Purchase order reply received
                         if (reply.getPerformative() == ACLMessage.INFORM) {
                             // Purchase successful. We can terminate
-                            System.out.println("inicio2" + " successfully purchased from agent " + reply.getSender().getName());
-                            //myAgent.doDelete();
+                             //myAgent.doDelete();
                         } else {
-                            System.out.println("Attempt failed: requested book already sold.");
+                            System.out.println("Esperando nuevos Lugares");
                         }
                         step = 4;
                     } else {
@@ -219,7 +215,7 @@ public class BookSellerAgent extends Agent {
 
         public boolean done() {
             if (step == 2 && bestSeller == null) {
-                System.out.println("Attempt failed: "  + " not available for sale");
+                System.out.println("Esperando por Nuevos luagares");
             }
             return ((step == 2 && bestSeller == null) || step == 4);
         }

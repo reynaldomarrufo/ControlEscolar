@@ -5,7 +5,7 @@
  */
 package agentes;
 
-import control.consultas;
+import modelo.Conexion;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
@@ -70,7 +70,6 @@ public class AlumnoAgent extends Agent {
         // Close the GUI
         myGui.dispose();
         // Printout a dismissal message
-        System.out.println("Seller-agent " + getAID().getName() + " terminating.");
     }
 
     /**
@@ -80,23 +79,52 @@ public class AlumnoAgent extends Agent {
         addBehaviour(new OneShotBehaviour() {
             public void action() {
                 Connection activo;
-
                 int idAlumno;
                 int idMateria;
-                consultas con = new consultas();
-                activo = con.getConexion();
 
+                Conexion con = new Conexion();
+                activo = con.getConexion();
                 idAlumno = getAlumnoId(activo, matricula, nombre);
                 idMateria = getMateriaId(activo, materia);
-                if (accion == "alta") {
-                    if (agregarCarga(activo, idAlumno, idMateria, materia, matricula)) {
-                        JOptionPane.showMessageDialog(null, "Carga academica correcta");
+                if (idAlumno != 0) {
+
+                    if ("alta".equals(accion)) {
+                        if (!validarUnicoRegistro(activo, idAlumno, idMateria)) {
+                            if (agregarCarga(activo, idAlumno, idMateria, materia, matricula)) {
+                                JOptionPane.showMessageDialog(null, "Carga academica correcta");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "El Alumno ya esta registrado para "+ materia);
+                        }
+                    } else if ("baja".equals(accion)) {
+                        eliminarCarga(activo, idAlumno, idMateria);
+                        JOptionPane.showMessageDialog(null, "Carga eliminada");
                     }
-                } else if (accion == "baja") {
-                    eliminarCarga(activo, idAlumno, idMateria);
-                    JOptionPane.showMessageDialog(null, "Carga eliminada");
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Los datos del Alumno no coincide, Favor de verificar los datos");
                 }
                 con.cerrarConexion(activo);
+            }
+
+            private boolean validarUnicoRegistro(Connection activo, int idAlumno, int idMateria) {
+                ResultSet resultado;
+                String queryIdAlumno = "select id from grupo where alumno_id = ? and materia_id= ? limit 1";
+                try {
+                    PreparedStatement preparedStmt = activo.prepareStatement(queryIdAlumno);
+                    preparedStmt.setInt(1, idAlumno);
+                    preparedStmt.setInt(2, idMateria);
+                    resultado = preparedStmt.executeQuery();
+                    while (resultado.next()) {
+                        idAlumno = Integer.parseInt(resultado.getString("id"));
+                        return true;
+                    }
+                    return false;
+
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error cierre: " + ex.getMessage());
+                }
+                return false;
             }
 
         });
@@ -105,15 +133,14 @@ public class AlumnoAgent extends Agent {
     public int getAlumnoId(Connection activo, final String matricula, final String nombre) {
         int idAlumno = 0;
         ResultSet resultado;
-        String queryIdAlumno = "select id from alumno where matricula = ? limit 1";
+        String queryIdAlumno = "select id from alumno where matricula = ? and nombre= ? limit 1";
         try {
             PreparedStatement preparedStmt = activo.prepareStatement(queryIdAlumno);
             preparedStmt.setString(1, matricula);
+            preparedStmt.setString(2, nombre);
             resultado = preparedStmt.executeQuery();
             while (resultado.next()) {
                 idAlumno = Integer.parseInt(resultado.getString("id"));
-            }
-            if (resultado != null) {
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error cierre: " + ex.getMessage());
@@ -156,14 +183,13 @@ public class AlumnoAgent extends Agent {
         } else {
             String matriculas;
             matriculas = (String) catalogue.get(materia);
-            System.out.println("matriculas catalogo " + matriculas);
+
             if (matriculas != null) {
                 matriculas = matriculas + "," + matricula;
             } else {
                 matriculas = matricula;
             }
             catalogue.put(materia, matriculas);
-            System.out.println(materia + " inserted into catalogue. matricula = " + matricula);
             JOptionPane.showMessageDialog(null, "Cupo no disponible, Agregado a lista de espera");
         }
         return false;
@@ -218,7 +244,7 @@ public class AlumnoAgent extends Agent {
 
     public boolean cupoDisponible(final String materia) {
         Connection activo;
-        consultas con = new consultas();
+        Conexion con = new Conexion();
         activo = con.getConexion();
         int idMateria;
         idMateria = getMateriaId(activo, materia);
@@ -244,23 +270,22 @@ public class AlumnoAgent extends Agent {
                 String matricula;
                 ACLMessage reply = msg.createReply();
                 matricula = (String) catalogue.get(materia);
-                if(matricula!=null){
-                String[] parts = matricula.split(",");
-                String part1 = parts[0];
-                
-                //System.out.println("esta es las matriculas " + part1);
-                if (part1 != null) {
-                    // The requested book is available for sale. Reply with the price
-                    reply.setPerformative(ACLMessage.PROPOSE);
-                    reply.setContent(String.valueOf(part1));
-                } else {
-                    // The requested book is NOT available for sale.
-                    reply.setPerformative(ACLMessage.REFUSE);
-                    reply.setContent("not-available");
+                if (matricula != null) {
+                    String[] parts = matricula.split(",");
+                    String part1 = parts[0];
+
+                    if (part1 != null) {
+                        // The requested book is available for sale. Reply with the price
+                        reply.setPerformative(ACLMessage.PROPOSE);
+                        reply.setContent(String.valueOf(part1));
+                    } else {
+                        // The requested book is NOT available for sale.
+                        reply.setPerformative(ACLMessage.REFUSE);
+                        reply.setContent("not-available");
+                    }
+                    myAgent.send(reply);
                 }
-                myAgent.send(reply);
-                }
-                
+
             } else {
                 block();
             }
@@ -289,22 +314,24 @@ public class AlumnoAgent extends Agent {
                 if (matricula != null & validacion.cupoDisponible(materia)) {
                     matricula = (String) catalogue.remove(materia);
                     String[] AlumnosLista = matricula.split(",");
-                    for(int i=0; i<AlumnosLista.length;i++){
-                    if(validacion.cupoDisponible(materia))
-                    addAlumno(materia, AlumnosLista[i]);
-                    else{
-                    if(aux!=null)
-                    aux=aux+","+AlumnosLista[i];
-                    else
-                    aux=AlumnosLista[i];    
+                    for (int i = 0; i < AlumnosLista.length; i++) {
+                        if (validacion.cupoDisponible(materia)) {
+                            addAlumno(materia, AlumnosLista[i]);
+                            System.out.println("Alumno: " + AlumnosLista[i] + " Inscrito al Curso" + materia);
+                        } else {
+                            if (aux != null) {
+                                aux = aux + "," + AlumnosLista[i];
+                            } else {
+                                aux = AlumnosLista[i];
+                            }
+                        }
                     }
-                    }
-                    if(aux!=null){
-                    System.out.println();
-                    catalogue.put(materia, aux);
+                    if (aux != null) {
+
+                        catalogue.put(materia, aux);
                     }
                     reply.setPerformative(ACLMessage.INFORM);
-                    System.out.println(materia + " sold to agent " + msg.getSender().getName());
+
                 } else {
                     // The requested book has been sold to another buyer in the meanwhile .
                     reply.setPerformative(ACLMessage.FAILURE);
@@ -322,7 +349,7 @@ public class AlumnoAgent extends Agent {
             Connection activo;
             ResultSet resultado;
             ResultSet resultadoMateria;
-            consultas con = new consultas();
+            Conexion con = new Conexion();
             activo = con.getConexion();
             String queryIdAlumno = "select id from alumno where matricula = ? limit 1";
             String queryIdMateria = "select id from materia where nombre = ? limit 1";
@@ -347,7 +374,7 @@ public class AlumnoAgent extends Agent {
                     preparedStmtGrupo.setInt(1, idAlumno);
                     preparedStmtGrupo.setInt(2, idMateria);
                     preparedStmtGrupo.execute();
-                    System.out.println("correcto");
+
                 }
 
             } catch (SQLException ex) {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package control;
+package modelo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  *
  * @author oscar
  */
-public class consultas {
+public class Conexion {
 
     private static String host="localhost";
     private static String bd= "control";
