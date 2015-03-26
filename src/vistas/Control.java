@@ -3,20 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package vista;
+package vistas;
 
 import javax.swing.JOptionPane;
+import agentes.BookSellerAgent;
+import control.consultas;
+import jade.gui.GuiEvent;
+import jade.gui.GuiAgent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.DefaultComboBoxModel;
+import modelo.materia;
 
 /**
  *
  * @author Emmanuel
  */
 public class Control extends javax.swing.JFrame {
-
+    private BookSellerAgent owner;
+    public final int SENT_TYPE=0;
     /**
      * Creates new form Control
      */
-    public Control() {
+    public Control(BookSellerAgent a) {
+        owner=a;
         initComponents();
     }
 
@@ -40,6 +52,11 @@ public class Control extends javax.swing.JFrame {
         Cancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jLabel1.setText("Universidad Autónoma de Yucatán. Facultad de Matemáticas");
 
@@ -49,7 +66,11 @@ public class Control extends javax.swing.JFrame {
 
         jLabel4.setText("Capacidad: ");
 
-        Asignatura.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Inteligencia Artificial", "Matematicas Discretas", "Fisica", "Arquitectura de Computadoras", "Estructura de Datos", "Teoria de la Computacion", "Computo Cientifico", "Inferencia Estadistica", "Compiladores", "Teroria de Lenguaje de Programación" }));
+        Asignatura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AsignaturaActionPerformed(evt);
+            }
+        });
 
         Capacidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -156,19 +177,58 @@ public class Control extends javax.swing.JFrame {
 
     private void AsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AsignarActionPerformed
         // TODO add your handling code here:
+        String nombre= Asignatura.getSelectedItem().toString();
+        String capacidad = Capacidad.getText().trim();
+
+	String Edicion = "2";
+	owner.updateCatalogue(nombre,Integer.parseInt(capacidad),Integer.parseInt(Edicion)); 
         JOptionPane.showMessageDialog(rootPane,"¡Cupo Asignado!");
     }//GEN-LAST:event_AsignarActionPerformed
+
+    private void AsignaturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AsignaturaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AsignaturaActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        Connection connection;
+        consultas con= new consultas();
+        connection=con.getConexion();
+        DefaultComboBoxModel<Object> dcm = new DefaultComboBoxModel<>();
+        Asignatura.setModel(dcm);
+        try{    
+            if(connection !=null){
+                //preparamos la consulta
+                Statement st = connection.createStatement();
+                //ejecutamos la consulta
+                ResultSet resultado=st.executeQuery("SELECT * FROM Materia");
+                //agregamos el primer elemento al jcombo1
+                dcm.addElement(new materia("-Seleccione-", 0));
+                //leemos todos los resultados
+                while (resultado.next()){
+                    //agregamos un elemento de cada iteracion
+                    dcm.addElement(new materia(resultado.getString("nombre"), resultado.getInt("capacidad")));
+                }
+                //cerramos conexiones
+                resultado.close();
+                st.close();
+                connection.close();
+            }        
+        }catch (SQLException e) {
+            JOptionPane.showMessageDialog(rootPane, e.getMessage());
+        }
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+   /* public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
+       /* try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -187,12 +247,12 @@ public class Control extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+     /*   java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Control().setVisible(true);
             }
         });
-    }
+    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Ampliar;

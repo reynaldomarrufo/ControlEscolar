@@ -3,7 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package vista;
+package vistas;
+
+import agentes.AlumnoAgent;
+import agentes.BookSellerAgent;
+import control.consultas;
+import jade.gui.GuiEvent;
+import jade.gui.GuiAgent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import modelo.materia;
 
 /**
  *
@@ -11,10 +24,13 @@ package vista;
  */
 public class Inicio extends javax.swing.JFrame {
 
+    private AlumnoAgent owner;
+    public final int SENT_TYPE=0;
     /**
      * Creates new form Inicio
      */
-    public Inicio() {
+    public Inicio(AlumnoAgent a) {
+        owner=a;
         initComponents();
     }
 
@@ -27,38 +43,41 @@ public class Inicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMatricula = new javax.swing.JLabel();
-        jNombre = new javax.swing.JLabel();
-        Matricula = new javax.swing.JTextField();
-        Nombre = new javax.swing.JTextField();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jAsignatura = new javax.swing.JLabel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        matricula = new javax.swing.JTextField();
+        nombre = new javax.swing.JTextField();
+        radioAlta = new javax.swing.JRadioButton();
+        radioBaja = new javax.swing.JRadioButton();
+        jLabel3 = new javax.swing.JLabel();
         Asignatura = new javax.swing.JComboBox();
-        Aceptar = new javax.swing.JButton();
+        Add = new javax.swing.JButton();
         Cancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jMatricula.setText("Matricula: ");
-
-        jNombre.setText("Nombre: ");
-
-        Matricula.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MatriculaActionPerformed(evt);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
-        jRadioButton1.setText("Alta");
+        jLabel1.setText("Matricula: ");
 
-        jRadioButton2.setText("Baja");
+        jLabel2.setText("Nombre: ");
 
-        jAsignatura.setText("Asignatura:");
+        radioAlta.setText("Alta");
 
-        Asignatura.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Inteligencia Artificial", "Matematicas Discretas", "Fisica", "Arquitectura de Computadoras", "Estructura de Datos", "Teoria de la Computacion", "Computo Cientifico", "Inferencia Estadistica", "Compiladores", "Teroria de Lenguaje de Programación" }));
+        radioBaja.setText("Baja");
 
-        Aceptar.setText("Aceptar");
+        jLabel3.setText("Asignatura:");
+
+        Add.setText("Aceptar");
+        Add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddActionPerformed(evt);
+            }
+        });
 
         Cancelar.setText("Cancelar");
         Cancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -75,7 +94,7 @@ public class Inicio extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(Aceptar)
+                        .addComponent(Add)
                         .addGap(37, 37, 37)
                         .addComponent(Cancelar))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -83,46 +102,46 @@ public class Inicio extends javax.swing.JFrame {
                             .addContainerGap()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jMatricula)
+                                    .addComponent(jLabel1)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(Matricula, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(matricula, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jNombre)
+                                    .addComponent(jLabel2)
                                     .addGap(18, 18, 18)
-                                    .addComponent(Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(63, 63, 63)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jAsignatura)
-                                .addComponent(jRadioButton1))
+                                .addComponent(jLabel3)
+                                .addComponent(radioAlta))
                             .addGap(18, 18, 18)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jRadioButton2)
-                                .addComponent(Asignatura, 0, 219, Short.MAX_VALUE)))))
-                .addContainerGap(44, Short.MAX_VALUE))
+                                .addComponent(radioBaja)
+                                .addComponent(Asignatura, 0, 227, Short.MAX_VALUE)))))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jMatricula)
-                    .addComponent(Matricula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1)
+                    .addComponent(matricula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jNombre)
-                    .addComponent(Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2)
+                    .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2))
+                    .addComponent(radioAlta)
+                    .addComponent(radioBaja))
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jAsignatura)
+                    .addComponent(jLabel3)
                     .addComponent(Asignatura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Aceptar)
+                    .addComponent(Add)
                     .addComponent(Cancelar))
                 .addGap(32, 32, 32))
         );
@@ -135,20 +154,67 @@ public class Inicio extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_CancelarActionPerformed
 
-    private void MatriculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MatriculaActionPerformed
+    private void AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_MatriculaActionPerformed
+        System.out.println("enviar");
+        String accion="baja";
+      //  GuiEvent ge= new GuiEvent(this,SENT_TYPE);
+        if(radioAlta.isSelected()){
+            accion= "alta";
+        }
+        String matriculas = matricula.getText().trim();
+	String nombres = nombre.getText().trim();
+        String asignatura= Asignatura.getSelectedItem().toString();
+	owner.updateCatalogue(matriculas, nombres,accion,asignatura); 
+        
+        //ge.addParameter(titleField.getText());
+        //ge.addParameter(priceField.getText());
+        //owner.postGuiEvent(ge);
+        //titleField.setText("");
+    }//GEN-LAST:event_AddActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+                                          
+        // TODO add your handling code here:
+        Connection connection;
+        consultas con= new consultas();
+        connection=con.getConexion();
+        DefaultComboBoxModel<Object> dcm = new DefaultComboBoxModel<>();
+        Asignatura.setModel(dcm);
+        try{    
+            if(connection !=null){
+                //preparamos la consulta
+                Statement st = connection.createStatement();
+                //ejecutamos la consulta
+                ResultSet resultado=st.executeQuery("SELECT * FROM Materia");
+                //agregamos el primer elemento al jcombo1
+                dcm.addElement(new materia("-Seleccione-", 0));
+                //leemos todos los resultados
+                while (resultado.next()){
+                    //agregamos un elemento de cada iteracion
+                    dcm.addElement(new materia(resultado.getString("nombre"), resultado.getInt("capacidad")));
+                }
+                //cerramos conexiones
+                resultado.close();
+                st.close();
+                connection.close();
+            }        
+        }catch (SQLException e) {
+            JOptionPane.showMessageDialog(rootPane, e.getMessage());
+        }
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    /*public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
+/*        try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -167,23 +233,24 @@ public class Inicio extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Inicio().setVisible(true);
             }
         });
-    }
+    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton Aceptar;
+    private javax.swing.JButton Add;
     private javax.swing.JComboBox Asignatura;
     private javax.swing.JButton Cancelar;
-    private javax.swing.JTextField Matricula;
-    private javax.swing.JTextField Nombre;
-    private javax.swing.JLabel jAsignatura;
-    private javax.swing.JLabel jMatricula;
-    private javax.swing.JLabel jNombre;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JTextField matricula;
+    private javax.swing.JTextField nombre;
+    private javax.swing.JRadioButton radioAlta;
+    private javax.swing.JRadioButton radioBaja;
     // End of variables declaration//GEN-END:variables
 }

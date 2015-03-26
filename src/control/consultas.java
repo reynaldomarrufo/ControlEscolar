@@ -14,71 +14,42 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Emmanuel
+ * @author oscar
  */
 public class consultas {
-    
-    private static String host ="localhost";
-    private static String bd = "control";
-    private static String login = "postgres";
-    private static String password = "reynaldo";
-    
-    public static Connection getConexion(String host,String bd,String login,String password){
-       Connection conexion =null;
-       String urlConexion = "jdbc:postgresql://" + host + "/" + bd;
-        try {
-            conexion = DriverManager.getConnection(urlConexion, login, password);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error apertura: " + ex.getMessage());
-        }
-       return conexion;
-       
+
+    private static String host="localhost";
+    private static String bd= "control";
+    private static String login="postgres";
+    private static String password="root";
+ 
+            
+    public static Connection getConexion(String host, String bd, String login, String password){
+    Connection conexion=null;
+    String urlConexion="jdbc:postgresql://"+ host+":5433/"+bd;
+    try{
+        conexion=DriverManager.getConnection(urlConexion, login,password);
+    }
+    catch(SQLException ex){
+        JOptionPane.showMessageDialog(null, "Error apertura: " + ex.getMessage());
+    }
+    return conexion;
     }
     
     public static Connection getConexion(){
         return getConexion(host,bd,login,password);
     }
     
-    public static void cerrarConexion(Connection con){
-        if(con != null){
+    public static void cerrarConexion(Connection conexion){
+        if(conexion !=null){
             try {
-                if(!con.isClosed())
-                    con.close();
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error cierre: " + e.getMessage());
-            }
+                if(conexion.isClosed())
+                    conexion.close();
+            } catch(SQLException ex){
+        JOptionPane.showMessageDialog(null, "Error cierre: " + ex.getMessage());
+    }
         }
     }
     
-    public static void main(String[] args) {
-       int numFilas=0;
-       Connection con = getConexion();
-       String orden = "insert into alumno (nombre, matricula) values ('Reynaldo Marrufo','11216289')";
-       Statement sentencia = null;
-        try {
-            sentencia = con.createStatement();
-            for(int i=0;i<1000;i++){
-               //numFilas = sentencia.executeUpdate(orden);
-            }
-            
-            System.out.println("YUPI!!, orden ejecutada, se afectaron: "+ numFilas+" filas");
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error statement: " + e.getMessage());
-        }
-        
-        orden = "select * from alumno";
-        ResultSet rs = null;
-        try {
-            rs = sentencia.executeQuery(orden);
-            while(rs.next()){
-                System.out.println(rs.getInt("id"));
-                System.out.println(" - " + rs.getString("nombre"));
-                System.out.println(" - " + rs.getString("matricula"));
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error en la consulta: " + e.getMessage());
-        }
-        
-        cerrarConexion(con);
-    }  
+    
 }

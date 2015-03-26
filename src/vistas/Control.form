@@ -8,6 +8,9 @@
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowOpened" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowOpened"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -121,20 +124,12 @@
     <Component class="javax.swing.JComboBox" name="Asignatura">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="10">
-            <StringItem index="0" value="Inteligencia Artificial"/>
-            <StringItem index="1" value="Matematicas Discretas"/>
-            <StringItem index="2" value="Fisica"/>
-            <StringItem index="3" value="Arquitectura de Computadoras"/>
-            <StringItem index="4" value="Estructura de Datos"/>
-            <StringItem index="5" value="Teoria de la Computacion"/>
-            <StringItem index="6" value="Computo Cientifico"/>
-            <StringItem index="7" value="Inferencia Estadistica"/>
-            <StringItem index="8" value="Compiladores"/>
-            <StringItem index="9" value="Teroria de Lenguaje de Programaci&#xf3;n"/>
-          </StringArray>
+          <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AsignaturaActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="Capacidad">
       <Events>
