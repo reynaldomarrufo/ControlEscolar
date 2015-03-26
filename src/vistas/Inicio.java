@@ -44,6 +44,8 @@ public class Inicio extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         matricula = new javax.swing.JTextField();
@@ -66,8 +68,10 @@ public class Inicio extends javax.swing.JFrame {
 
         jLabel2.setText("Nombre: ");
 
+        buttonGroup1.add(radioAlta);
         radioAlta.setText("Alta");
 
+        buttonGroup1.add(radioBaja);
         radioBaja.setText("Baja");
 
         jLabel3.setText("Asignatura:");
@@ -93,7 +97,7 @@ public class Inicio extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 170, Short.MAX_VALUE)
                         .addComponent(Add)
                         .addGap(37, 37, 37)
                         .addComponent(Cancelar))
@@ -101,14 +105,12 @@ public class Inicio extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addContainerGap()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(matricula, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jLabel1)
+                                .addComponent(jLabel2))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(nombre)
+                                .addComponent(matricula, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)))
                         .addGroup(layout.createSequentialGroup()
                             .addGap(63, 63, 63)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -117,7 +119,7 @@ public class Inicio extends javax.swing.JFrame {
                             .addGap(18, 18, 18)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(radioBaja)
-                                .addComponent(Asignatura, 0, 227, Short.MAX_VALUE)))))
+                                .addComponent(Asignatura, 0, 228, Short.MAX_VALUE)))))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -245,6 +247,8 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JComboBox Asignatura;
     private javax.swing.JButton Cancelar;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
