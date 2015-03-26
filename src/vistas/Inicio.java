@@ -174,7 +174,7 @@ public class Inicio extends javax.swing.JFrame {
 	owner.updateCatalogue(matriculas, nombres,accion,asignatura); 
         }
         else{
-        JOptionPane.showMessageDialog(null,"Complete todo los campos");
+        JOptionPane.showMessageDialog(null,"Favor de completar todos los campos");
         }
     }//GEN-LAST:event_AddActionPerformed
 
