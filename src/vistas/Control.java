@@ -166,16 +166,20 @@ public class Control extends javax.swing.JFrame {
 
     private void AmpliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AmpliarActionPerformed
         // TODO add your handling code here:
-        JOptionPane.showInputDialog(rootPane, "Introducir el nuevo cupo");
+        String nuevocupo=JOptionPane.showInputDialog(rootPane, "Introducir el nuevo cupo");
+        String nombre= Asignatura.getSelectedItem().toString();
+        String capacidad = Capacidad.getText().trim();
+        
+        
+	owner.updateCatalogue(nombre,Integer.parseInt(nuevocupo)); 
+        JOptionPane.showMessageDialog(rootPane,"¡Se ha ampliado el Cupo!");
     }//GEN-LAST:event_AmpliarActionPerformed
 
     private void AsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AsignarActionPerformed
         // TODO add your handling code here:
         String nombre= Asignatura.getSelectedItem().toString();
         String capacidad = Capacidad.getText().trim();
-
-	String Edicion = "2";
-	owner.updateCatalogue(nombre,Integer.parseInt(capacidad),Integer.parseInt(Edicion)); 
+	owner.updateCatalogue(nombre,Integer.parseInt(capacidad)); 
         JOptionPane.showMessageDialog(rootPane,"¡Cupo Asignado!");
     }//GEN-LAST:event_AsignarActionPerformed
 

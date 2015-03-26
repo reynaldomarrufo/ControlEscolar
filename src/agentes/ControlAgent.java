@@ -102,7 +102,7 @@ public class ControlAgent extends Agent {
     /**
      * This is invoked by the GUI when the user adds a new book for sale
      */
-    public void updateCatalogue(final String nombre, final int capacidad, final int Edicion) {
+    public void updateCatalogue(final String nombre, final int capacidad) {
         addBehaviour(new OneShotBehaviour() {
             public void action() {
                 Connection activo;
@@ -126,6 +126,23 @@ public class ControlAgent extends Agent {
                 System.out.println("Se actualizo correctamente la capacidad para la materia: " + nombre);
             }
         });
+    }
+    
+    public int getCapacidadActual(Connection activo, final String materia) {
+        int capacidadMateria = 0;
+        ResultSet resultadocapacidadMateria;
+        String queryCapacidadMateria = "select capacidad from materia where nombre = ? limit 1";
+        try {
+            PreparedStatement preparedStmtMateria = activo.prepareStatement(queryCapacidadMateria);
+            preparedStmtMateria.setString(1, materia);
+            resultadocapacidadMateria = preparedStmtMateria.executeQuery();
+            while (resultadocapacidadMateria.next()) {
+               capacidadMateria = resultadocapacidadMateria.getInt("capacidad");
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error en consulta de de capacidad de la materia: " + ex.getMessage());
+        }
+        return capacidadMateria;
     }
 
     /**
@@ -212,6 +229,7 @@ public class ControlAgent extends Agent {
                     break;
             }
         }
+        
 
         public boolean done() {
             if (step == 2 && bestSeller == null) {
